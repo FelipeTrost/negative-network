@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -15,15 +16,17 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄'
-  });
-});
+app.get('/', (req, res) => res.end("Not available"));
 
-app.use('/api/v1', api);
+app.use('/api', api);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
+
+mongoose.connect('mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
+.then(() => console.log("Connected to database"))
+.catch(err => {
+  if(err) throw err;
+});
 
 module.exports = app;

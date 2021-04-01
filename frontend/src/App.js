@@ -40,7 +40,8 @@ const useStyles = makeStyles({
 
 });
 
-const server = "http://localhost:5000"
+const server = "https://negativitynetwork.herokuapp.com"
+// const server = "http://localhost:5000"
 
 function App() {
   const [comments, setComments] = useState([]);

@@ -5,6 +5,7 @@ import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import { IconButton, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem } from '@material-ui/core';
 import {useLocalStorage} from "react-use-storage";
 import client from './feathers';
+import Cookies from './Cookies';
 
 const asyncLiked = "dislikeNetwork";
 const asyncName = "dislikeNetwork-name";
@@ -145,6 +146,7 @@ function App() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Cookies />
       </Container>
   );
 }

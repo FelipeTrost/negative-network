@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@feathersjs/client": "^4.5.11",
+    "@giphy/js-fetch-api": "^2.4.0",
+    "@giphy/react-components": "^2.3.6-alpha.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@testing-library/jest-dom": "^5.11.4",

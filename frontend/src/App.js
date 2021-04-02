@@ -4,6 +4,7 @@ import Add from '@material-ui/icons/Add';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import { IconButton, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem } from '@material-ui/core';
 import {useLocalStorage} from "react-use-storage";
+import client from './feathers';
 
 const asyncLiked = "dislikeNetwork";
 const asyncName = "dislikeNetwork-name";
@@ -40,7 +41,7 @@ const useStyles = makeStyles({
 
 });
 
-const server = "https://negativitynetwork.herokuapp.com"
+// const server = "https://negativitynetwork.herokuapp.com"
 // const server = "http://localhost:5000"
 
 function App() {
@@ -53,71 +54,30 @@ function App() {
   const classes = useStyles();
 
   useEffect(()=>{
-    fetchInfo()
+    client.service('comment').watch().find().subscribe(data => setComments(data.reverse()))
   }, [])
 
-  const fetchInfo = () => {
-    fetch(`${server}/api/comment`)
-    .then(r => r.json())
-    .then(r => setComments(r.comments.reverse()))
-  }
-
   const like = async (id, idx) => {
-    const copy = [...comments];
-
     if(liked[id]){
       setLiked({...liked, [id]:false});
-      copy[idx].dislikes--;
-      setComments(copy);
-      await fetch(`${server}/api/like`,{
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: "DELETE",
-          body: JSON.stringify({id})
-      })
+      client.service('comment').patch(id ,{dislike: false});
     }else{
       setLiked({...liked, [id]:true});
-      copy[idx].dislikes++;
-      setComments(copy);
-      await fetch(`${server}/api/like`,{
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        method: "POST",
-        body: JSON.stringify({id})
-      });
+      client.service('comment').patch(id, {dislike: true});
     }
   }
 
   const upload = async () => {
-    const res = await fetch(`${server}/api/comment`,{
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      method: "POST",
-      body: JSON.stringify({message, name})
-    });
+    const brandNew = await client.service('comment').create({message, name})
 
-    const { id, success } = await res.json();
-
-    if(!success){
-      alert("Nope, there was an error, maybe check your input");
-      return;
-    }
-
-    fetchInfo();
     setMessage("Sample message")
     setModal(false);
-    setOwn({...own, [id]: true});
+    setOwn({...own, [brandNew._id]: true});
   }
 
   return (
     <Container maxWidth="sm">
-      <h1 className={classes.pageTitle}>Negative Network</h1>
+      <h1 className={classes.pageTitle}>Negative <br /> Network</h1>
 
       <List>
       {comments.map((c, idx) => (

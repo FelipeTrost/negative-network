@@ -1,13 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Add from '@material-ui/icons/Add';
-import InfoIcon from '@material-ui/icons/Info';
-import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
-import { IconButton, Popover, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, Grid } from '@material-ui/core';
+import { Container, Fab, List } from '@material-ui/core';
 import {useLocalStorage} from "react-use-storage";
 import client from './feathers';
+import { TransitionGroup } from 'react-transition-group';
+
 import Cookies from './Cookies';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import Comment from "./Comment";
+import UploadForm from "./UploadForm";
+import FaqButton from "./FaqButton";
 
 const asyncLiked = "dislikeNetwork";
 const asyncName = "dislikeNetwork-name";
@@ -47,183 +49,37 @@ const useStyles = makeStyles({
 
 });
 
-const date2string = d => {
-  const date = new Date(d);
-
-  return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
-}
-
 function App() {
+  const [liked, setLiked] = useLocalStorage(asyncLiked, {});
+  const [own, setOwn] = useLocalStorage(asyncOwn, {});
+  const [name, setName] = useLocalStorage(asyncName, "");
+
   const [comments, setComments] = useState([]);
-  const [liked, setLiked, removeValue] = useLocalStorage(asyncLiked, {});
-  const [own, setOwn, removeOwn] = useLocalStorage(asyncOwn, {});
-  const [name, setName, removeName] = useLocalStorage(asyncName, "");
-  const [message, setMessage] = useState("");
-  const [imageField, setImageField] = useState("");
   const [modal, setModal] = useState(false);
   const classes = useStyles();
-  // const infoAnchor = useRef(null);
-  const [infoAnchor, setInfoanchor] = useState(null)
 
   useEffect(()=>{
     client.service('comment').watch().find().subscribe(data => setComments(data.reverse()))
   }, [])
 
-  const like = async (id, idx) => {
-    if(liked[id]){
-      setLiked({...liked, [id]:false});
-      client.service('comment').patch(id ,{dislike: false});
-    }else{
-      setLiked({...liked, [id]:true});
-      client.service('comment').patch(id, {dislike: true});
-    }
-  }
-
-  const upload = async () => {
-    if(!message || !name) {
-      alert("Message and Name can't be blank");
-      return;
-    }
-
-    setModal(false);
-
-    const brandNew = await client.service('comment').create({message, name, picture: imageField})
-
-    setOwn({...own, [brandNew._id]: true});
-    setMessage("")
-    setImageField("")
-  }
-
   return (
     <Container maxWidth="sm">
       <h1 className={classes.pageTitle} id="page-title">Negative <br /> Network</h1>
 
-      <Grid
-        direction="row"
-        justify="center"
-        container
-      >
-        <IconButton onClick={e => setInfoanchor(e.target)}>
-          <InfoIcon />
-        </IconButton>
-      </Grid>
-      <Popover
-        id='mouse-over-popover'
-        open={Boolean(infoAnchor)}
-        anchorEl={infoAnchor}
-        onClose={() => setInfoanchor(null)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'top',
-        }}
-        transformOrigin={{
-          vertical: 'Borrom',
-          horizontal: 'center',
-        }}
-      >
-        <Typography className={classes.info}>You can only dislike 😁</Typography>
-      </Popover>
+      <FaqButton classes={classes} />
 
-        <TransitionGroup
-          component={List}
-        >
-          {comments.map((c, idx) => (
-            <CSSTransition
-              className="fade"
-              timeout={500}
-              key={c._id}
-            >
-              <ListItem key={c._id}>
-                <Card className={classes.root}>
-                  <CardContent>
-                  <Grid
-                    container
-                    direction="row"
-                    justify="space-between"
-                    alignItems="center"
-                  >
-                      <Typography className={classes.title} color={own[c._id] ? "error" : "textSecondary"} gutterBottom>
-                        {c.name || "Mr/Ms NoName"}
-                      </Typography>
-
-                      {c.createdAt && <Typography className={classes.title} color="textSecondary" gutterBottom>
-                        {date2string(c.createdAt)}
-                      </Typography>}
-                    </Grid>
-
-                    <Typography variant="h5" component="h2">
-                      {c.message}
-                    </Typography>
-
-                    {c.picture && <img className="comment-image" src={c.picture} />}
-                  </CardContent>
-                  <CardActions>
-                    <IconButton
-                      color={liked[c._id] ? "primary" : "default"}
-                      onClick={() => like(c._id, idx)}
-                    >
-                      <ThumbDownAltIcon />
-                    </IconButton>
-                    {c.dislikes}
-                  </CardActions>
-                </Card>
-              </ListItem>
-            </CSSTransition>
+        <TransitionGroup component={List}>
+          {comments.map(c => (
+              <Comment key={c._id} classes={classes} comment={c} own={own[c._id]} disliked={liked[c._id]} liked={liked} setLiked={setLiked} />
           ))}
         </TransitionGroup>
-      {/* </List> */}
 
       <Fab onClick={() => setModal(true)} className={classes.fab}>
         <Add color="primary" className={classes.Fab} />
       </Fab>
-      <Dialog open={modal} onClose={() => setModal(false)} aria-labelledby="add-comment">
-        <DialogTitle id="form-dialog-title">Be stupid</DialogTitle>
 
-        <DialogContent>
-          {/* <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-          </DialogContentText> */}
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            fullWidth
-          />
+      <UploadForm name={name} setName={setName} modal={modal} setModal={setModal} own={own} setOwn={setOwn} />
 
-          <TextField
-            label="Comment"
-            margin="dense"
-            // multiline
-            fullWidth
-            rows={4}
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-          />
-
-          <TextField
-            margin="dense"
-            label="Image link (optional)"
-            type="text"
-            value={imageField}
-            onChange={e => setImageField(e.target.value)}
-            fullWidth
-          />
-
-          <img className="comment-image" src={imageField} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setModal(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={upload} color="secondary">
-            Noooo
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Cookies />
       </Container>
   );

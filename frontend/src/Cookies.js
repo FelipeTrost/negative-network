@@ -5,7 +5,7 @@ import {useLocalStorage} from "react-use-storage";
 const asyncCookies = "dislikeNetwork-cookies";
 
 function App() {
-  const [cookieAgreement, setCookieAgreement, removeValue] = useLocalStorage(asyncCookies, false);
+  const [cookieAgreement, setCookieAgreement] = useLocalStorage(asyncCookies, false);
 
   return (
     <Dialog

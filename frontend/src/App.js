@@ -19,8 +19,7 @@ const useStyles = makeStyles({
     letterSpacing: 10 ,
     fontFamily: "Bungee",
     textAlign: "center",
-    paddingTop: 20,
-    paddingBottom: 20,
+    margin: 15
   },
   root: {
     width: "100%"
@@ -97,7 +96,7 @@ function App() {
 
   return (
     <Container maxWidth="sm">
-      <h1 className={classes.pageTitle}>Negative <br /> Network</h1>
+      <h1 className={classes.pageTitle} id="page-title">Negative <br /> Network</h1>
 
       <Grid
         direction="row"

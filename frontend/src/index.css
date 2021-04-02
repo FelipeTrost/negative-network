@@ -10,6 +10,14 @@ body {
   font-family: 'Courier New';
 }
 
+#page-title{
+  position: -webkit-sticky!important;
+  position: sticky!important;
+  top: 0;
+  z-index: 1;
+  text-shadow: 2px 2px #a3a3a3;
+}
+
 .comment-image{
   max-width: 180px;
   max-height: 180px;

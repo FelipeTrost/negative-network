@@ -4,6 +4,7 @@ const cors = require('cors');
 const logger = require('./logger');
 const mongoose = require('mongoose');
 const service = require('feathers-mongoose').Service;
+const isImageUrl = require('is-image-url');
 
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
@@ -77,6 +78,9 @@ app.service('comment').hooks({
     update: disallow(),
     create: [ async context => {
       context.data['createdAt'] = new Date();
+      const url = context.data['picture'];
+
+      context.data['picture'] = url && isImageUrl(url) ? url : "";
       return context;
     }  ]
   }

@@ -6,6 +6,7 @@ import { IconButton, Typography, CardContent, CardActions, Card, Container, Fab,
 import {useLocalStorage} from "react-use-storage";
 import client from './feathers';
 import Cookies from './Cookies';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const asyncLiked = "dislikeNetwork";
 const asyncName = "dislikeNetwork-name";
@@ -50,9 +51,15 @@ function App() {
   const [liked, setLiked, removeValue] = useLocalStorage(asyncLiked, {});
   const [own, setOwn, removeOwn] = useLocalStorage(asyncOwn, {});
   const [name, setName, removeName] = useLocalStorage(asyncName, "");
-  const [message, setMessage] = useState("Sample message");
+  const [message, setMessage] = useState("");
+  const [imageField, setImageField] = useState("");
   const [modal, setModal] = useState(false);
+  const [showpic, setShowpic] = useState(false);
   const classes = useStyles();
+
+  useEffect(() => {
+    setShowpic(false);
+  }, [imageField])
 
   useEffect(()=>{
     client.service('comment').watch().find().subscribe(data => setComments(data.reverse()))
@@ -69,42 +76,62 @@ function App() {
   }
 
   const upload = async () => {
-    const brandNew = await client.service('comment').create({message, name})
+    if(!message || !name) {
+      alert("Message and Name can't be blank");
+      return;
+    }
 
-    setMessage("Sample message")
     setModal(false);
+
+    const brandNew = await client.service('comment').create({message, name, picture: imageField})
+
     setOwn({...own, [brandNew._id]: true});
+    setMessage("")
+    setImageField("")
   }
 
   return (
     <Container maxWidth="sm">
       <h1 className={classes.pageTitle}>Negative <br /> Network</h1>
 
-      <List>
-      {comments.map((c, idx) => (
-        <ListItem key={c._id}>
-        <Card className={classes.root}>
-          <CardContent>
-            <Typography className={classes.title} color={own[c._id] ? "error" : "textSecondary"} gutterBottom>
-              {c.name || "Mr/Ms NoName"}
-            </Typography>
-            <Typography variant="h5" component="h2">
-              {c.message}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <IconButton
-              color={liked[c._id] ? "primary" : "default"}
-              onClick={() => like(c._id, idx)}
+      {/* <List> */}
+        <TransitionGroup
+          component={List}
+        >
+          {comments.map((c, idx) => (
+            <CSSTransition
+              className="fade"
+              timeout={500}
+              key={c._id}
             >
-              <ThumbDownAltIcon />
-            </IconButton>
-            {c.dislikes}
-          </CardActions>
-        </Card>
-        </ListItem>
-      ))}
-      </List>
+              <ListItem key={c._id}>
+                <Card className={classes.root}>
+                  <CardContent>
+                    <Typography className={classes.title} color={own[c._id] ? "error" : "textSecondary"} gutterBottom>
+                      {c.name || "Mr/Ms NoName"}
+                    </Typography>
+
+                    <Typography variant="h5" component="h2">
+                      {c.message}
+                    </Typography>
+
+                    {c.picture && <img className="comment-image" src={c.picture} />}
+                  </CardContent>
+                  <CardActions>
+                    <IconButton
+                      color={liked[c._id] ? "primary" : "default"}
+                      onClick={() => like(c._id, idx)}
+                    >
+                      <ThumbDownAltIcon />
+                    </IconButton>
+                    {c.dislikes}
+                  </CardActions>
+                </Card>
+              </ListItem>
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+      {/* </List> */}
 
       <Fab onClick={() => setModal(true)} className={classes.fab}>
         <Add color="primary" className={classes.Fab} />
@@ -128,14 +155,25 @@ function App() {
           />
 
           <TextField
-            // label="Multiline"
+            label="Comment"
             margin="dense"
-            multiline
+            // multiline
             fullWidth
             rows={4}
             value={message}
             onChange={e => setMessage(e.target.value)}
           />
+
+          <TextField
+            margin="dense"
+            label="Image link (optional)"
+            type="text"
+            value={imageField}
+            onChange={e => setImageField(e.target.value)}
+            fullWidth
+          />
+
+          <img className="comment-image" src={imageField} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setModal(false)} color="primary">

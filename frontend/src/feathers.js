@@ -4,7 +4,7 @@ const rx = require('feathers-reactive');
 
 const server = "https://negativitynetwork.herokuapp.com"
 
-const socket = io(server);
+const socket = io("http://localhost:3030");
 const client = feathers().configure(rx({
     idField: '_id'
   }));

@@ -9,6 +9,9 @@ const CommentSchema = new mongoose.Schema({
 		type: String,
 		required: [true, "can't be blank"],
 	},
+	picture: {
+		type: String,
+	},
 	name: {
 		type: String,
 		required: [true, "can't be blank"],

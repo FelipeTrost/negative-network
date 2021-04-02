@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Add from '@material-ui/icons/Add';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
-import { IconButton, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem } from '@material-ui/core';
+import { IconButton, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, Grid } from '@material-ui/core';
 import {useLocalStorage} from "react-use-storage";
 import client from './feathers';
 import Cookies from './Cookies';
@@ -31,6 +31,7 @@ const useStyles = makeStyles({
   },
   title: {
     fontSize: 14,
+    maxWidth: "40%"
   },
   pos: {
     marginBottom: 12,
@@ -43,8 +44,11 @@ const useStyles = makeStyles({
 
 });
 
-// const server = "https://negativitynetwork.herokuapp.com"
-// const server = "http://localhost:5000"
+const date2string = d => {
+  const date = new Date(d);
+
+  return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
+}
 
 function App() {
   const [comments, setComments] = useState([]);
@@ -107,9 +111,20 @@ function App() {
               <ListItem key={c._id}>
                 <Card className={classes.root}>
                   <CardContent>
-                    <Typography className={classes.title} color={own[c._id] ? "error" : "textSecondary"} gutterBottom>
-                      {c.name || "Mr/Ms NoName"}
-                    </Typography>
+                  <Grid
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                  >
+                      <Typography className={classes.title} color={own[c._id] ? "error" : "textSecondary"} gutterBottom>
+                        {c.name || "Mr/Ms NoName"}
+                      </Typography>
+
+                      {c.createdAt && <Typography className={classes.title} color="textSecondary" gutterBottom>
+                        {date2string(c.createdAt)}
+                      </Typography>}
+                    </Grid>
 
                     <Typography variant="h5" component="h2">
                       {c.message}

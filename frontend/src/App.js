@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Add from '@material-ui/icons/Add';
+import InfoIcon from '@material-ui/icons/Info';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
-import { IconButton, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, Grid } from '@material-ui/core';
+import { IconButton, Popover, Typography, CardContent, CardActions, Card, Container, Fab, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, Grid } from '@material-ui/core';
 import {useLocalStorage} from "react-use-storage";
 import client from './feathers';
 import Cookies from './Cookies';
@@ -41,6 +42,9 @@ const useStyles = makeStyles({
     bottom: 20,
     right: 20,
   },
+  info:{
+    padding: 20
+  }
 
 });
 
@@ -58,12 +62,9 @@ function App() {
   const [message, setMessage] = useState("");
   const [imageField, setImageField] = useState("");
   const [modal, setModal] = useState(false);
-  const [showpic, setShowpic] = useState(false);
   const classes = useStyles();
-
-  useEffect(() => {
-    setShowpic(false);
-  }, [imageField])
+  // const infoAnchor = useRef(null);
+  const [infoAnchor, setInfoanchor] = useState(null)
 
   useEffect(()=>{
     client.service('comment').watch().find().subscribe(data => setComments(data.reverse()))
@@ -98,7 +99,32 @@ function App() {
     <Container maxWidth="sm">
       <h1 className={classes.pageTitle}>Negative <br /> Network</h1>
 
-      {/* <List> */}
+      <Grid
+        direction="row"
+        justify="center"
+        container
+      >
+        <IconButton onClick={e => setInfoanchor(e.target)}>
+          <InfoIcon />
+        </IconButton>
+      </Grid>
+      <Popover
+        id='mouse-over-popover'
+        open={Boolean(infoAnchor)}
+        anchorEl={infoAnchor}
+        onClose={() => setInfoanchor(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'top',
+        }}
+        transformOrigin={{
+          vertical: 'Borrom',
+          horizontal: 'center',
+        }}
+      >
+        <Typography className={classes.info}>You can only dislike 😁</Typography>
+      </Popover>
+
         <TransitionGroup
           component={List}
         >

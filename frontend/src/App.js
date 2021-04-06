@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Add from '@material-ui/icons/Add';
-import { Container, Fab, List } from '@material-ui/core';
+import PublicIcon from '@material-ui/icons/Public';
+import { Button, Container, Fab, Fade, Grow, List, Grid, Avatar, Badge, IconButton } from '@material-ui/core';
 import {useLocalStorage} from "react-use-storage";
 import client from './feathers';
-import { TransitionGroup } from 'react-transition-group';
 
 import Cookies from './Cookies';
 import Comment from "./Comment";
@@ -58,27 +58,90 @@ function App() {
   const [modal, setModal] = useState(false);
   const classes = useStyles();
 
+  const [lang, setLang] = useState('');
+  const watchRef = useRef(null);
+
+  const setLangW = la => {
+    setComments([])
+    setLang(la)
+  }
+
   useEffect(()=>{
-    client.service('comment').watch().find().subscribe(data => setComments(data.reverse()))
+    watchRef.current && watchRef.current.unsubscribe()
+
+    if(!lang)
+      watchRef.current = client.service('comment').watch().find().subscribe(data => setComments(data.reverse()))
+    else
+      watchRef.current = client.service('comment').watch().find({query: {lang}}).subscribe(data => setComments(data.reverse()))
+    // console.log("finding lang");
+  }, [lang])
+
+  useEffect(()=>{
+    return () =>  watchRef.current.unsubscribe();
   }, [])
 
   return (
     <Container maxWidth="sm">
-      <h1 className={classes.pageTitle} id="page-title">Negative <br /> Network</h1>
+      <Grow in={true} timeout={1000}>
+        <h1 className={classes.pageTitle} id="page-title">Negative <br /> Network</h1>
+      </Grow>
 
-      <FaqButton classes={classes} />
+      <Grid
+        direction="row"
+        wrap="nowrap"
+        justify="center"
+        container
+      >
+        <FaqButton classes={classes} />
 
-        <TransitionGroup component={List}>
-          {comments.map(c => (
-              <Comment key={c._id} classes={classes} comment={c} own={own[c._id]} disliked={liked[c._id]} liked={liked} setLiked={setLiked} />
-          ))}
-        </TransitionGroup>
+        <IconButton onClick={() => setLangW()}>
+            <Badge anchorOrigin={{vertical: 'bottom', horizontal: 'right',}} variant="dot" color="primary"
+                  invisible={lang}
+              >
+              <PublicIcon />
+            </Badge>
+        </IconButton>
+
+        <Button
+          style={{padding:0}}
+          color="transparent"
+          onClick={() => setLangW('es')}
+          startIcon={
+            <Badge anchorOrigin={{vertical: 'bottom', horizontal: 'right',}} variant="dot" color="primary"
+              invisible={lang !== 'es'}
+            >
+              <Avatar style={{width:22, height:22}} src={'http://purecatamphetamine.github.io/country-flag-icons/3x2/ES.svg'} />
+            </Badge>
+          }
+          />
+
+        <Button
+          style={{padding:0}}
+          color="transparent"
+          onClick={() => setLangW('de')}
+          startIcon={
+            <Badge anchorOrigin={{vertical: 'bottom', horizontal: 'right',}} variant="dot" color="primary"
+              invisible={lang !== 'de'}
+            >
+              <Avatar style={{width:22, height:22}} src={'http://purecatamphetamine.github.io/country-flag-icons/3x2/DE.svg'} />
+            </Badge>
+          }
+          />
+
+
+      </Grid>
+
+      <List>
+        {comments.map(c => (
+          <Comment key={c._id} classes={classes} comment={c} own={own[c._id]} disliked={liked[c._id]} liked={liked} setLiked={setLiked} />
+        ))}
+      </List>
 
       <Fab onClick={() => setModal(true)} className={classes.fab}>
         <Add color="primary" className={classes.Fab} />
       </Fab>
 
-      <UploadForm name={name} setName={setName} modal={modal} setModal={setModal} own={own} setOwn={setOwn} />
+      <UploadForm name={name} setName={setName} modal={modal} setModal={setModal} own={own} setOwn={setOwn} lang={lang} />
 
       <Cookies />
       </Container>

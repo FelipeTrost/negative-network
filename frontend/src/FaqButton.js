@@ -7,13 +7,7 @@ function FaqButton({ classes }) {
 
   return (
     <>
-        <Grid
-            direction="row"
-            justify="center"
-            container
-        >
-            <IconButton onClick={e => setInfoanchor(e.target)}> <InfoIcon /> </IconButton>
-        </Grid>
+        <IconButton onClick={e => setInfoanchor(e.target)}> <InfoIcon /> </IconButton>
 
         <Popover
             id='mouse-over-popover'

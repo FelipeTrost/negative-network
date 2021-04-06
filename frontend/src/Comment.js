@@ -1,6 +1,5 @@
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
-import { IconButton, Typography, CardContent, CardActions, Card,  ListItem, Grid } from '@material-ui/core';
-import { CSSTransition } from 'react-transition-group';
+import { IconButton, Typography, CardContent, CardActions, Card,  ListItem, Grid, Fade } from '@material-ui/core';
 import client from './feathers';
 
 const date2string = d => {
@@ -21,49 +20,45 @@ function Comment({ classes, comment, disliked, own, liked, setLiked }) {
   }
 
   return (
-    <CSSTransition
-            className="fade"
-            timeout={500}
-            key={comment._id}
-    >
-        <ListItem>
-            <Card className={classes.root}>
-                <CardContent>
-                <Grid
-                container
-                direction="row"
-                justify="space-between"
-                alignItems="center"
-                >
-                    <Typography className={classes.title} color={own ? "error" : "textSecondary"} gutterBottom>
-                    {comment.name || "Mr/Ms NoName"}
-                    </Typography>
-
-                    {comment.createdAt && <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    {date2string(comment.createdAt)}
-                    </Typography>}
-                </Grid>
-
-                <Typography variant="h5" component="h2">
-                    {comment.message}
+    <ListItem>
+      <Fade in={true} timeout={800}>
+        <Card className={classes.root}>
+            <CardContent>
+            <Grid
+            container
+            direction="row"
+            justify="space-between"
+            alignItems="center"
+            >
+                <Typography className={classes.title} color={own ? "error" : "textSecondary"} gutterBottom>
+                {comment.name || "Mr/Ms NoName"}
                 </Typography>
 
-                {comment.picture && <img className="comment-image" src={comment.picture} alt={comment.message} />}
-                </CardContent>
+                {comment.createdAt && <Typography className={classes.title} color="textSecondary" gutterBottom>
+                {date2string(comment.createdAt)}
+                </Typography>}
+            </Grid>
 
-                <CardActions>
-                    <IconButton
-                        color={disliked ? "primary" : "default"}
-                        onClick={() => like(comment._id)}
-                    >
-                        <ThumbDownAltIcon />
-                    </IconButton>
+            <Typography variant="h5" component="h2">
+                {comment.message}
+            </Typography>
 
-                    {comment.dislikes}
-                </CardActions>
-            </Card>
-        </ListItem>
-    </CSSTransition>
+            {comment.picture && <img className="comment-image" src={comment.picture} alt={comment.message} />}
+            </CardContent>
+
+            <CardActions>
+                <IconButton
+                    color={disliked ? "primary" : "default"}
+                    onClick={() => like(comment._id)}
+                >
+                    <ThumbDownAltIcon />
+                </IconButton>
+
+                {comment.dislikes}
+            </CardActions>
+        </Card>
+      </Fade>
+    </ListItem>
   );
 }
 

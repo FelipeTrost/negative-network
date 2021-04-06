@@ -5,7 +5,7 @@ import { SearchContextManager } from "@giphy/react-components";
 import GiphyModal from './GiphyModal';
 import client from './feathers';
 
-function UploadForm({modal, setModal, name, setName, own, setOwn}) {
+function UploadForm({modal, setModal, name, setName, own, setOwn, lang}) {
   const [message, setMessage] = useState("");
   const [imageField, setImageField] = useState("");
   const [giphyModal, setGiphyModal] = useState("");
@@ -17,8 +17,9 @@ function UploadForm({modal, setModal, name, setName, own, setOwn}) {
     }
 
     setModal(false);
-
-    const brandNew = await client.service('comment').create({message, name, picture: imageField})
+    const creating = {message, name, lang, picture: imageField}
+    console.log(creating);
+    const brandNew = await client.service('comment').create(creating)
 
     setOwn({...own, [brandNew._id]: true});
     setMessage("")

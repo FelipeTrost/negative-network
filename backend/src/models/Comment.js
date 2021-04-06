@@ -18,6 +18,9 @@ const CommentSchema = new mongoose.Schema({
 	},
 	createdAt: {
 		type: Date
+	},
+	lang:{
+		type: String
 	}
 });
 

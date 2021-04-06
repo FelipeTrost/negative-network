@@ -5,6 +5,7 @@ const logger = require('./logger');
 const mongoose = require('mongoose');
 const service = require('feathers-mongoose').Service;
 const isImageUrl = require('is-image-url');
+const lang = require('iso-639-1');
 
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
@@ -78,9 +79,13 @@ app.service('comment').hooks({
     update: disallow(),
     create: [ async context => {
       context.data['createdAt'] = new Date();
-      const url = context.data['picture'];
 
+      const url = context.data['picture'];
       context.data['picture'] = url && isImageUrl(url) ? url : "";
+
+      const glang = context.data['lang'];
+      context.data['lang'] = lang.validate(glang) ? glang : "";
+
       return context;
     }  ]
   }

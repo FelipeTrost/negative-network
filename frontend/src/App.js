@@ -62,6 +62,7 @@ function App() {
   const watchRef = useRef(null);
 
   const setLangW = la => {
+    if(la === lang) return;
     setComments([])
     setLang(la)
   }

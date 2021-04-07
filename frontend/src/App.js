@@ -94,17 +94,18 @@ function App() {
       >
         <FaqButton classes={classes} />
 
-        <IconButton onClick={() => setLangW()}>
+        <IconButton onClick={() => setLangW()} style={{backgroundColor:'transparent'}} disableRipple>
             <Badge anchorOrigin={{vertical: 'bottom', horizontal: 'right',}} variant="dot" color="primary"
                   invisible={lang}
               >
-              <PublicIcon />
+              <PublicIcon/>
             </Badge>
         </IconButton>
 
         <Button
-          style={{padding:0}}
+          style={{padding:0, backgroundColor:'transparent'}}
           color="transparent"
+          disableRipple
           onClick={() => setLangW('es')}
           startIcon={
             <Badge anchorOrigin={{vertical: 'bottom', horizontal: 'right',}} variant="dot" color="primary"
@@ -116,7 +117,9 @@ function App() {
           />
 
         <Button
-          style={{padding:0}}
+          style={{padding:0,backgroundColor:'transparent'}}
+          size="small"
+          disableRipple
           color="transparent"
           onClick={() => setLangW('de')}
           startIcon={
@@ -127,8 +130,6 @@ function App() {
             </Badge>
           }
           />
-
-
       </Grid>
 
       <List>

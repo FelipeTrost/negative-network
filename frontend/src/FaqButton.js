@@ -7,7 +7,7 @@ function FaqButton({ classes }) {
 
   return (
     <>
-        <IconButton onClick={e => setInfoanchor(e.target)}> <InfoIcon /> </IconButton>
+        <IconButton style={{backgroundColor:'transparent'}} sonClick={e => setInfoanchor(e.target)}> <InfoIcon /> </IconButton>
 
         <Popover
             id='mouse-over-popover'

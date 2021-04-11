@@ -8,6 +8,6 @@ RUN npm install
 
 COPY backend/ .
 
-EXPOSE 3333
+EXPOSE 5000
 
 CMD node src index.js

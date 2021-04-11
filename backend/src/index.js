@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+const mongoose = require('mongoose');
 const logger = require('./logger');
 const app = require('./app');
 const port = app.get('port');

@@ -2,7 +2,6 @@ const compress = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
 const logger = require('./logger');
-const mongoose = require('mongoose');
 const service = require('feathers-mongoose').Service;
 const isImageUrl = require('is-image-url');
 const lang = require('iso-639-1');

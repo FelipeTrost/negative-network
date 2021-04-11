@@ -5,6 +5,7 @@ const logger = require('./logger');
 const service = require('feathers-mongoose').Service;
 const isImageUrl = require('is-image-url');
 const lang = require('iso-639-1');
+const LanguageDetect = require('languagedetect');
 require('dotenv').config();
 
 const feathers = require('@feathersjs/feathers');
@@ -16,6 +17,7 @@ const { disallow } = require('feathers-hooks-common');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const Comment = require('./models/Comment')
+const lngDetector = new LanguageDetect();
 
 const app = express(feathers());
 
@@ -77,8 +79,20 @@ app.service('comment').hooks({
       const url = context.data['picture'];
       context.data['picture'] = url && isImageUrl(url) ? url : "";
 
-      const glang = context.data['lang'];
-      context.data['lang'] = lang.validate(glang) ? glang : "";
+      let glang = context.data['lang'];
+      glang = lang.validate(glang) ? glang : "";
+
+      if(!glang){
+        //Detect language: we only will take spanish or german, it doesn't matter the certainty, just the one that comes first
+        const detected = lngDetector.detect(context.data.message);
+
+        for(const res of detected){
+          if(res[0] == 'spanish') glang = 'es'
+          else if(res[0] == 'german') glang = 'de'
+        }
+      }
+
+      context.data['lang'] = glang;
 
       return context;
     }  ]

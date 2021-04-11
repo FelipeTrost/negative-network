@@ -4,8 +4,8 @@ const app = require('./app');
 const port = app.get('port');
 const mongoose = require('mongoose');
 
-const dburl = process.env.NODE_ENV === 'production' ? process.env.MONGO_URL : 'mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority';
-
+const dburl = process.env.MONGO_URL;
+console.log(dburl);
 mongoose.connect(dburl, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
   const server = app.listen(port);
@@ -14,6 +14,7 @@ mongoose.connect(dburl, {useNewUrlParser: true, useUnifiedTopology: true})
     logger.info('Feathers application started on http://%s:%d', app.get('host'), port)
   );
 })
+.catch(err => console.log(dburl, err))
 
 process.on('unhandledRejection', (reason, p) =>
   logger.error('Unhandled Rejection at: Promise ', p, reason)

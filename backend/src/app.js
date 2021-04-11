@@ -5,6 +5,7 @@ const logger = require('./logger');
 const service = require('feathers-mongoose').Service;
 const isImageUrl = require('is-image-url');
 const lang = require('iso-639-1');
+require('dotenv').config();
 
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');

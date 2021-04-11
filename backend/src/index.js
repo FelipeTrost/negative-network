@@ -2,11 +2,15 @@
 const logger = require('./logger');
 const app = require('./app');
 const port = app.get('port');
-const server = app.listen(port);
+mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.MONGO_URL : 'mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
+.then(() => {
+  const server = app.listen(port);
 
-process.on('unhandledRejection', (reason, p) =>
-  logger.error('Unhandled Rejection at: Promise ', p, reason)
-);
+  process.on('unhandledRejection', (reason, p) =>
+    logger.error('Unhandled Rejection at: Promise ', p, reason)
+  );
+})
+
 
 server.on('listening', () =>
   logger.info('Feathers application started on http://%s:%d', app.get('host'), port)

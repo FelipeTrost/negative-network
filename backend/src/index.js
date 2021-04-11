@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const dburl = process.env.NODE_ENV === 'production' ? pocess.env.MONGO_URL : 'mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority';
 console.log(dburl);
+console.log(process.env.NODE_ENV);
 mongoose.connect(dburl, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
   const server = app.listen(port);

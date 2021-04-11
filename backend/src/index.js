@@ -2,7 +2,7 @@
 const logger = require('./logger');
 const app = require('./app');
 const port = app.get('port');
-mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.MONGO_URL : 'mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
   const server = app.listen(port);
 

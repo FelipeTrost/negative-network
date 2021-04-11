@@ -17,11 +17,7 @@ const appHooks = require('./app.hooks');
 const channels = require('./channels');
 const Comment = require('./models/Comment')
 
-mongoose.connect('mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
-.then(() => console.log("Connected to database"))
-.catch(err => {
-  if(err) throw err;
-});
+mongoose.connect('mongodb+srv://app:3gbgCBtsZLVcHYv@cluster0.kspsb.mongodb.net/negativeNetwork?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const app = express(feathers());
 

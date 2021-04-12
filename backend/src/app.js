@@ -87,8 +87,8 @@ app.service('comment').hooks({
         const detected = lngDetector.detect(context.data.message);
 
         for(const res of detected){
-          if(res[0] == 'spanish') glang = 'es'
-          else if(res[0] == 'german') glang = 'de'
+          if(res[0] == 'spanish' && res[1] >= .2) glang = 'es'
+          else if(res[0] == 'german' && res[1] >= .2) glang = 'de'
         }
       }
 

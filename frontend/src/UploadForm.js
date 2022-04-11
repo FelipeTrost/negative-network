@@ -68,7 +68,7 @@ function UploadForm({ modal, setModal, name, setName, own, setOwn, lang }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-
+          {/*
           <Grid
             direction="row"
             wrap="nowrap"
@@ -85,17 +85,20 @@ function UploadForm({ modal, setModal, name, setName, own, setOwn, lang }) {
               style={{ width: "60%" }}
             />
 
-            <Typography>Or</Typography>
+            <Typography>Or</Typography> */}
 
-            <Button
-              onClick={() => setGiphyModal(true)}
-              style={{ width: "20%" }}
-              variant="contained"
-              color="secondary"
-            >
-              Giphy
-            </Button>
-          </Grid>
+          <br />
+          <br />
+          <Button
+            styles={{ margin: "16px" }}
+            onClick={() => setGiphyModal(true)}
+            style={{ width: "20%" }}
+            variant="contained"
+            color="secondary"
+          >
+            Giphy
+          </Button>
+          {/* </Grid> */}
 
           <img
             className="comment-image"
